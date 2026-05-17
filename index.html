@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love 🤍</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+background:black;
+overflow:hidden;
+color:white;
+}
+
+.bg{
+position:fixed;
+inset:0;
+background:url('photo2.jpg') center/cover no-repeat;
+z-index:-2;
+}
+
+.dark{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.6);
+z-index:-1;
+}
+
+.page{
+width:100%;
+height:100vh;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:20px;
+overflow:auto;
+animation:fade 1s;
+}
+
+.active{display:flex;}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.card{
+width:95%;
+max-width:430px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+padding:25px;
+border-radius:25px;
+text-align:center;
+}
+
+h1{font-size:28px;margin-bottom:15px;}
+
+.subtitle{font-size:15px;opacity:0.9;}
+
+.btn{
+padding:12px 20px;
+border:none;
+border-radius:15px;
+background:#ffd6e5;
+font-weight:600;
+cursor:pointer;
+margin-top:15px;
+}
+
+.option{
+width:100%;
+padding:14px;
+margin:8px 0;
+border:none;
+border-radius:12px;
+background:#ffd4df;
+cursor:pointer;
+}
+
+.correct{background:#8effb0 !important;}
+.wrong{background:#ff8f8f !important;}
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+.flip{
+width:140px;
+height:180px;
+perspective:1000px;
+cursor:pointer;
+}
+
+.flip-inner{
+width:100%;height:100%;
+transition:0.8s;
+transform-style:preserve-3d;
+position:relative;
+}
+
+.flip.flipped .flip-inner{transform:rotateY(180deg);}
+
+.front,.back{
+position:absolute;
+width:100%;height:100%;
+backface-visibility:hidden;
+border-radius:15px;
+overflow:hidden;
+}
+
+.front{
+background:#ffc8da;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+}
+
+.back{transform:rotateY(180deg);}
+.back img{width:100%;height:100%;object-fit:cover;}
+
+.puzzle{
+width:300px;height:300px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+margin:auto;
+gap:2px;
+}
+
+.tile{
+background-image:url('photo2.jpg');
+background-size:300px 300px;
+cursor:pointer;
+border:1px solid white;
+}
+
+.envelope{
+width:240px;height:160px;
+background:#ffbfd2;
+margin:auto;
+position:relative;
+border-radius:15px;
+cursor:pointer;
+}
+
+.envelope:before{
+content:'';
+position:absolute;
+border-left:120px solid transparent;
+border-right:120px solid transparent;
+border-top:80px solid #ffd6e3;
+}
+
+.letter{
+display:none;
+background:white;
+color:black;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+text-align:left;
+}
+
+.call-screen{
+position:fixed;
+inset:0;
+background:black;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9999;
+}
+
+.accept{
+width:80px;height:80px;
+border-radius:50%;
+background:#59ff80;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+cursor:pointer;
+}
+
+.proposal{
+position:fixed;
+inset:0;
+background:black;
+display:none;
+justify-content:center;
+align-items:center;
+text-align:center;
+font-size:28px;
+z-index:99999;
+}
+
+</style>
+</head>
+
+<body onclick="startMusic()">
+
+<div class="bg"></div>
+<div class="dark"></div>
+
+<audio id="music" loop>
+<source src="song.mp3" type="audio/mp3">
+</audio>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+<div class="card">
+<h1>I Belong To You 🤍</h1>
+<p class="subtitle">Something is waiting...</p>
+<button class="btn" onclick="nextPage(2)">Continue</button>
+</div>
+</div>
+
+<!-- PAGE 2 PUZZLE -->
+<div class="page" id="page2">
+<div class="card">
+<h1>Solve Puzzle 🧩</h1>
+<div id="puzzle" class="puzzle"></div>
+<p id="pmsg"></p>
+</div>
+</div>
+
+<!-- PAGE 3 QUESTIONS -->
+<div class="page" id="page3">
+<div class="card">
+<h1>First Meet?</h1>
+<button class="option" onclick="ans(this,false)">April 3rd</button>
+<button class="option" onclick="ans(this,true)">July 23rd</button>
+<button class="option" onclick="ans(this,false)">May 1st</button>
+
+<button class="btn" onclick="nextPage(4)">Next</button>
+</div>
+</div>
+
+<div class="page" id="page4">
+<div class="card">
+<h1>First Kiss?</h1>
+<button class="option" onclick="ans(this,false)">April 3rd</button>
+<button class="option" onclick="ans(this,true)">July 23rd</button>
+<button class="option" onclick="ans(this,false)">June 1st</button>
+
+<button class="btn" onclick="nextPage(5)">Next</button>
+</div>
+</div>
+
+<!-- TIMER -->
+<div class="page" id="page5">
+<div class="card">
+<h1>Together Time 🤍</h1>
+<div id="timer"></div>
+<button class="btn" onclick="nextPage(6)">Next</button>
+</div>
+</div>
+
+<!-- MEMORY -->
+<div class="page" id="page6">
+<div class="card">
+<h1>Memory</h1>
+<div class="memory-box" onclick="showMem()">Tap to reveal</div>
+
+<div id="mem" style="display:none;">
+<img src="photo1.jpg" class="memory-img">
+<div id="typing"></div>
+</div>
+
+<button class="btn" onclick="nextPage(7)">Next</button>
+</div>
+</div>
+
+<!-- GALLERY -->
+<div class="page" id="page7">
+<div class="card">
+<h1>Gallery</h1>
+<div class="gallery">
+
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">💖</div><div class="back"><img src="1.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">✨</div><div class="back"><img src="2.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">🤍</div><div class="back"><img src="3.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">🫶</div><div class="back"><img src="4.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">💞</div><div class="back"><img src="5.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">🌙</div><div class="back"><img src="6.jpg"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">💫</div><div class="back"><img src="7.png"></div></div></div>
+<div class="flip" onclick="flip(this)"><div class="flip-inner"><div class="front">🌸</div><div class="back"><img src="8.jpg"></div></div></div>
+
+</div>
+
+<button class="btn" onclick="nextPage(8)">Next</button>
+</div>
+</div>
+
+<!-- LETTER -->
+<div class="page" id="page8">
+<div class="card">
+<h1>Letter 💌</h1>
+
+<div class="envelope" onclick="openLetter()"></div>
+
+<div class="letter" id="letter"></div>
+</div>
+</div>
+
+<!-- CALL -->
+<div class="call-screen" id="call">
+<div class="accept" onclick="acceptCall()">📞</div>
+</div>
+
+<!-- PROPOSAL -->
+<div class="proposal" id="proposal"></div>
+
+<script>
+
+let tiles=[];
+
+function startMusic(){
+document.getElementById("music").play();
+}
+
+function nextPage(n){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("page"+n).classList.add("active");
+if(n==2) createPuzzle();
+}
+
+function createPuzzle(){
+let p=document.getElementById("puzzle");
+p.innerHTML="";
+tiles=[...Array(9).keys()].sort(()=>Math.random()-0.5);
+
+tiles.forEach(pos=>{
+let d=document.createElement("div");
+d.className="tile";
+d.style.backgroundPosition=`${-(pos%3)*100}px ${-Math.floor(pos/3)*100}px`;
+p.appendChild(d);
+});
+
+document.querySelectorAll(".tile").forEach(t=>{
+t.onclick=()=>{
+t.classList.toggle("sel");
+let sel=[...document.querySelectorAll(".sel")];
+if(sel.length==2){
+let a=sel[0].style.backgroundPosition;
+sel[0].style.backgroundPosition=sel[1].style.backgroundPosition;
+sel[1].style.backgroundPosition=a;
+sel.forEach(s=>s.classList.remove("sel"));
+checkPuzzle();
+}
+};
+});
+}
+
+function checkPuzzle(){
+let ok=true;
+document.querySelectorAll(".tile").forEach((t,i)=>{
+let correct=`${-(i%3)*100}px ${-Math.floor(i/3)*100}px`;
+if(t.style.backgroundPosition!=correct) ok=false;
+});
+if(ok){
+document.getElementById("pmsg").innerText="🎉 Solved!";
+setTimeout(()=>nextPage(3),1500);
+}
+}
+
+function ans(b,c){
+if(b.classList.contains("correct")||b.classList.contains("wrong")) return;
+b.classList.add(c?"correct":"wrong");
+}
+
+setInterval(()=>{
+let d=new Date("2023-05-18");
+let n=new Date();
+document.getElementById("timer").innerText=Math.floor((n-d)/86400000)+" days together";
+},1000);
+
+function showMem(){
+document.getElementById("mem").style.display="block";
+let t="You are my everything 🤍";
+let i=0;
+function type(){
+if(i<t.length){
+document.getElementById("typing").innerHTML+=t[i++];
+setTimeout(type,50);
+}}
+type();
+}
+
+function flip(c){c.classList.toggle("flipped");}
+
+function openLetter(){
+document.getElementById("letter").style.display="block";
+document.getElementById("letter").innerText="I love you forever 🤍";
+setTimeout(()=>document.getElementById("call").style.display="flex",3000);
+}
+
+function acceptCall(){
+document.getElementById("call").style.display="none";
+document.getElementById("proposal").style.display="flex";
+
+let steps=["Reading...","Ring opens...","Will you marry me?","YES 🤍"];
+let i=0;
+let box=document.getElementById("proposal");
+
+let t=setInterval(()=>{
+box.innerText=steps[i++];
+if(i==steps.length){
+clearInterval(t);
+setTimeout(()=>{
+window.location.href="https://wa.me/94771636959?text=I%20love%20you";
+},3000);
+}
+},2000);
+}
+
+</script>
+
+</body>
+</html>
